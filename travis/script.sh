@@ -21,4 +21,9 @@ if [ ${VERSION} == "latest" ]; then
 else
   export SW_VERSION=${VERSION}
 fi
-docker build --build-arg GOLANG_ARCH=${GOARCH} --build-arg SW_VERSION=${SW_VERSION} --build-arg ARCH=${ARCH} --build-arg QEMU_ARCH=${QEMU_ARCH} -t urfin78/prometheus:${VERSION}-${ARCH} -f ${DOCKERFILE} .
+if [ ${ARCH} == "arm32v6" ]; then
+  export DISTRO=alpine
+else
+  export DISTRO=buster
+fi
+docker build --build-arg DISTRO=${DISTRO} --build-arg GOLANG_ARCH=${GOARCH} --build-arg SW_VERSION=${SW_VERSION} --build-arg ARCH=${ARCH} --build-arg QEMU_ARCH=${QEMU_ARCH} -t urfin78/prometheus:${VERSION}-${ARCH} -f ${DOCKERFILE} .
