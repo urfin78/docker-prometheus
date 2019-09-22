@@ -8,7 +8,11 @@ sudo apt-get update
 sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
 if [ ${ARCH} != "amd64" ];then
   QEMU_USER_STATIC_DOWNLOAD_URL="https://github.com/multiarch/qemu-user-static/releases/download"
-  QEMU_USER_STATIC_LATEST_TAG=$(curl -s https://api.github.com/repos/multiarch/qemu-user-static/tags|grep 'name.*v[0-9]'| head -n 1| cut -d '"' -f 4)
+  QEMU_USER_STATIC_LATEST_TAG=''
+  while [ -z "${QEMU_USER_STATIC_LATEST_TAG}" ]
+  do
+      QEMU_USER_STATIC_LATEST_TAG=$(curl -s https://api.github.com/repos/multiarch/qemu-user-static/tags|grep 'name.*v[0-9]'| head -n 1| cut -d '"' -f 4)
+  done
   curl -SL "${QEMU_USER_STATIC_DOWNLOAD_URL}/${QEMU_USER_STATIC_LATEST_TAG}/x86_64_qemu-${QEMU_ARCH}-static.tar.gz"|tar xzv
   docker run --rm --privileged multiarch/qemu-user-static:register --reset
 fi
