@@ -1,6 +1,5 @@
-FROM golang:1.12.9-alpine as gobuild
+FROM golang:1.13-buster as gobuild
 ARG SW_VERSION
-RUN apk add --no-cache git curl build-base
 WORKDIR ${GOPATH}/src
 RUN git clone http://github.com/prometheus/prometheus.git --single-branch --branch ${SW_VERSION} --depth=1
 WORKDIR ${GOPATH}/src/prometheus

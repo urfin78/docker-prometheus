@@ -2,7 +2,7 @@ ARG ARCH
 ARG QEMU_ARCH
 ARG GOLANG_ARCH
 ARG SW_VERSION
-FROM ${ARCH}/golang:1.12.9-buster as gobuild
+FROM ${ARCH}/golang:1.13-buster as gobuild
 ARG ARCH
 ARG QEMU_ARCH
 ARG GOLANG_ARCH
