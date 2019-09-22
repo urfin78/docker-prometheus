@@ -1,13 +1,10 @@
 #!/usr/bin/env bash
-#set -e
+set -e
 
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 sudo apt-get update
 sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
-
-export DOCKERFILE="Dockerfile.${ARCH}"
-
 if [ ${ARCH} != "amd64" ];then
   QEMU_USER_STATIC_DOWNLOAD_URL="https://github.com/multiarch/qemu-user-static/releases/download"
   QEMU_USER_STATIC_LATEST_TAG=$(curl -s https://api.github.com/repos/multiarch/qemu-user-static/tags|grep 'name.*v[0-9]'| head -n 1| cut -d '"' -f 4)
@@ -20,5 +17,5 @@ if [ ${VERSION} == "latest" ]; then
 else
   export SW_VERSION=${VERSION}
 fi
-
+export DOCKERFILE="Dockerfile.${ARCH}"
 docker build --build-arg GOLANG_ARCH=${GOARCH} --build-arg SW_VERSION=${SW_VERSION} --build-arg ARCH=${ARCH} --build-arg QEMU_ARCH=${QEMU_ARCH} -t urfin78/prometheus:${VERSION}-${ARCH} -f ${DOCKERFILE} .
