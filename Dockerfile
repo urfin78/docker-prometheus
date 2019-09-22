@@ -2,7 +2,7 @@ ARG ARCH
 ARG QEMU_ARCH
 ARG GOLANG_ARCH
 ARG SW_VERSION
-FROM ${ARCH}/golang:1.12.9-alpine as gobuild
+FROM ${ARCH}/golang:1.12.9-buster as gobuild
 ARG ARCH
 ARG QEMU_ARCH
 ARG GOLANG_ARCH
@@ -10,7 +10,6 @@ ARG SW_VERSION
 ENV GOARCH ${GOLANG_ARCH}
 ENV GOOS linux
 COPY qemu-${QEMU_ARCH}-static /usr/bin/
-RUN apk add --no-cache git curl build-base
 WORKDIR ${GOPATH}/src
 RUN git clone http://github.com/prometheus/prometheus.git --single-branch --branch ${SW_VERSION} --depth=1
 WORKDIR ${GOPATH}/src/prometheus
