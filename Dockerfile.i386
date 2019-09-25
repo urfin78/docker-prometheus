@@ -31,6 +31,7 @@ RUN addgroup --gid "${GID}" "${USER}" \
 COPY --from=gobuild --chown=${UID}:${GID} /go/src/prometheus/prometheus /prometheus/prometheus
 COPY --from=gobuild --chown=${UID}:${GID} /go/src/prometheus/promtool /prometheus/promtool
 COPY --from=gobuild --chown=${UID}:${GID} /go/src/prometheus/documentation/examples/prometheus.yml /prometheus/prometheus.yml
+COPY --from=gobuild --chown=${UID}:${GID} /go/src/prometheus/LICENSE /prometheus/LICENSE
 RUN mkdir /data && chown -R ${UID}:${GID} /data
 RUN rm -f /usr/bin/qemu-${QEMU_ARCH}-static
 USER ${UID}:${GID}
