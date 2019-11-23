@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-set -e
-set -v
-set -x
+#set -e
+#set -v
+#set -x
 
 if [ ${ARCH} != "amd64" ];then
   QEMU_USER_STATIC_DOWNLOAD_URL="https://github.com/multiarch/qemu-user-static/releases/download"
