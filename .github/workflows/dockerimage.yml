@@ -27,11 +27,11 @@ jobs:
     
     - name: Build the latest Docker image
       run: docker build --build-arg VERSION=master --build-arg ARCH=${{ matrix.ARCH }} -t prometheus:latest -f "Dockerfile.${{ matrix.ARCH }}" .
-      if: success() && ${{ matrix.VERSION }} == 'latest'
+      if: success() && matrix.VERSION == 'latest'
 
     - name: Build the Docker image
       run: docker build --build-arg VERSION=$VERSION --build-arg ARCH=${{ matrix.ARCH }} -t prometheus:$VERSION -f "Dockerfile.${{ matrix.ARCH }}" .
-      if: success() && ${{ matrix.VERSION }} == 'last'
+      if: success() && matrix.VERSION == 'last'
     
     - name: Login to GitHub Package Registry
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u "${{ github.actor }}" --password-stdin
