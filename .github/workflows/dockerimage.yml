@@ -24,22 +24,22 @@ jobs:
       shell: bash
     
     - name: Build the latest Docker image
-      run: docker build --build-arg VERSION=master -t prometheus:latest -f "Dockerfile.${ARCH}" .
+      run: docker build --build-arg VERSION=master -t prometheus:latest -f "Dockerfile.${{ matrix.ARCH }}" .
       if: success() && env.VERSION == 'latest'
 
     - name: Build the Docker image
-      run: docker build --build-arg VERSION=$VERSION -t prometheus:$VERSION -f "Dockerfile.${ARCH}" .
+      run: docker build --build-arg VERSION=$VERSION -t prometheus:$VERSION -f "Dockerfile.${{ matrix.ARCH }}" .
       if: success() && env.VERSION != 'latest'
     
     - name: Login to GitHub Package Registry
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u "${{ github.actor }}" --password-stdin
 
     - name: Tag the latest Docker image
-      run: docker tag prometheus:$VERSION docker.pkg.github.com/urfin78/docker-prometheus/prometheus:$VERSION-${ARCH}
+      run: docker tag prometheus:$VERSION docker.pkg.github.com/urfin78/docker-prometheus/prometheus:$VERSION-${{ matrix.ARCH }}
       if: success()
 
     - name: Push the latest image to GPR
-      run: docker push docker.pkg.github.com/urfin78/docker-prometheus/prometheus:$VERSION-${ARCH}
+      run: docker push docker.pkg.github.com/urfin78/docker-prometheus/prometheus:$VERSION-${{ matrix.ARCH }}
       if: success()
 
     - name: Logout to GitHub Registry
