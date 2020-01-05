@@ -1,0 +1,43 @@
+name: Docker image build and push
+on: 
+  push:
+    branches:
+    - testing
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    env:
+      VERSION: latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Get latest prometheus release
+      run: |
+        export prometheus_LATEST=$(curl -s "https://api.github.com/repos/prometheus/prometheus/releases" | grep -Po '"tag_name": "\K.*?(?=")')
+        echo "::set-env name=VERSION::$PROMETHEUS_LATEST"
+      shell: bash
+    
+    - name: Build the latest Docker image
+      run: docker build --build-arg VERSION=master -t prometheus:latest .
+      if: success() && env.VERSION == 'latest'
+
+    - name: Build the Docker image
+      run: docker build --build-arg VERSION=$VERSION -t prometheus:$VERSION .
+      if: success() && env.VERSION != 'latest'
+    
+    - name: Login to GitHub Package Registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u "${{ github.actor }}" --password-stdin
+
+    - name: Tag the latest Docker image
+      run: docker tag prometheus:$VERSION docker.pkg.github.com/urfin78/docker-prometheus/prometheus:$VERSION
+      if: success()
+
+    - name: Push the latest image to GPR
+      run: docker push docker.pkg.github.com/urfin78/docker-prometheus/prometheus:$VERSION
+      if: success()
+
+    - name: Logout to GitHub Registry
+      run: docker logout docker.pkg.github.com
