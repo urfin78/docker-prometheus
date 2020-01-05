@@ -24,11 +24,11 @@ jobs:
       shell: bash
     
     - name: Build the latest Docker image
-      run: docker build --build-arg VERSION=master -t prometheus:latest -f "Dockerfile.${ARCH}"
+      run: docker build --build-arg VERSION=master -t prometheus:latest -f "Dockerfile.${ARCH}" .
       if: success() && env.VERSION == 'latest'
 
     - name: Build the Docker image
-      run: docker build --build-arg VERSION=$VERSION -t prometheus:$VERSION -f "Dockerfile.${ARCH}"
+      run: docker build --build-arg VERSION=$VERSION -t prometheus:$VERSION -f "Dockerfile.${ARCH}" .
       if: success() && env.VERSION != 'latest'
     
     - name: Login to GitHub Package Registry
