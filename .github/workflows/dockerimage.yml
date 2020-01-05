@@ -13,6 +13,7 @@ jobs:
     strategy:
       matrix:
         ARCH: [amd64, i386, arm32v6]
+      fail-fast: false
 
     steps:
     - uses: actions/checkout@v1
@@ -24,11 +25,11 @@ jobs:
       shell: bash
     
     - name: Build the latest Docker image
-      run: docker build --build-arg VERSION=master -t prometheus:latest -f "Dockerfile.${{ matrix.ARCH }}" .
+      run: docker build --build-arg VERSION=master --build-arg ARCH=${{ matrix.ARCH }} -t prometheus:latest -f "Dockerfile.${{ matrix.ARCH }}" .
       if: success() && env.VERSION == 'latest'
 
     - name: Build the Docker image
-      run: docker build --build-arg VERSION=$VERSION -t prometheus:$VERSION -f "Dockerfile.${{ matrix.ARCH }}" .
+      run: docker build --build-arg VERSION=$VERSION --build-arg ARCH=${{ matrix.ARCH }} -t prometheus:$VERSION -f "Dockerfile.${{ matrix.ARCH }}" .
       if: success() && env.VERSION != 'latest'
     
     - name: Login to GitHub Package Registry
