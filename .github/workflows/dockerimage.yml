@@ -24,6 +24,7 @@ jobs:
         export PROMETHEUS_LATEST=$(curl -s "https://api.github.com/repos/prometheus/prometheus/releases" | grep -Po '"tag_name": "\K.*?(?=")')
         echo "::set-env name=VERSION::$PROMETHEUS_LATEST"
       shell: bash
+      if: matrix.VERSION == 'last'
     
     - name: Build the latest Docker image
       run: docker build --build-arg VERSION=master --build-arg ARCH=${{ matrix.ARCH }} -t prometheus:latest -f "Dockerfile.${{ matrix.ARCH }}" .
