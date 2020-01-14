@@ -28,7 +28,7 @@ jobs:
       if: matrix.VERSION == 'last_upstream'
 
     - name: Get last package
-      - uses: octokit/graphql-action@v2.x
+      uses: octokit/graphql-action@v2.x
         id: get_latest_package
         with:
           query: |
