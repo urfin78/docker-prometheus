@@ -10,12 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     env:
       VERSION: latest
+      AVAILABLE: false
     strategy:
       matrix:
         ARCH: [amd64, i386, arm32v6]
-        VERSION: [latest, last]
+        VERSION: [latest, last_upstream]
       fail-fast: false
-
     steps:
     - uses: actions/checkout@v1
 
@@ -23,16 +23,37 @@ jobs:
       run: |
         export PROMETHEUS_LATEST=$(curl -s "https://api.github.com/repos/prometheus/prometheus/releases" | grep -Po '"tag_name": "\K.*?(?=")')
         echo "::set-env name=VERSION::$PROMETHEUS_LATEST"
+        echo "::set-env name=AVAILABLE::true"
       shell: bash
-      if: matrix.VERSION == 'last'
-    
+      if: matrix.VERSION == 'last_upstream'
+    - name: Get last package
+      - uses: octokit/graphql-action@v2.x
+        id: get_latest_package
+        with:
+          query: |
+            query release($owner:String!,$repo:String!) {
+              repository(owner:$owner,name:$repo) {
+                packages(first:1) {
+                  nodes {
+                    name
+                    version
+                  }
+                }
+              }
+            }
+          owner: ${{ github.event.repository.owner.name }}
+          repo: ${{ github.event.repository.name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: "echo 'latest release: ${{ steps.get_latest_package.outputs.data }}'"
+   
     - name: Build the latest Docker image
       run: docker build --build-arg VERSION=master --build-arg ARCH=${{ matrix.ARCH }} -t prometheus:latest -f "Dockerfile.${{ matrix.ARCH }}" .
       if: success() && matrix.VERSION == 'latest'
 
     - name: Build the Docker image
       run: docker build --build-arg VERSION=$VERSION --build-arg ARCH=${{ matrix.ARCH }} -t prometheus:$VERSION -f "Dockerfile.${{ matrix.ARCH }}" .
-      if: success() && matrix.VERSION == 'last'
+      if: success() && matrix.VERSION == 'last_upstream'
     
     - name: Login to GitHub Package Registry
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u "${{ github.actor }}" --password-stdin
