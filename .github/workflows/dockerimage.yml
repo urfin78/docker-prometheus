@@ -46,7 +46,7 @@ jobs:
         repo: ${{ github.event.repository.name }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: "echo 'latest release: ${{ steps.get_latest_package.outputs.data }}'"
+      run: "echo 'latest release: ${{ steps.get_latest_package.outputs.data }}'"
    
     - name: Build the latest Docker image
       run: docker build --build-arg VERSION=master --build-arg ARCH=${{ matrix.ARCH }} -t prometheus:latest -f "Dockerfile.${{ matrix.ARCH }}" .
