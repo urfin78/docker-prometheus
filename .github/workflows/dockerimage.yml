@@ -24,8 +24,12 @@ jobs:
         echo "::set-env name=AVAILABLE::true"
       shell: bash
       if: matrix.VERSION == 'last_upstream'
-
-    - name: Set up Docker Buildx
+    
+    - name: Login to Dockerhub Registry
+      run: echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u "${{ secrets.DOCKER_USER }}" --password-stdin
+      if: success()
+    
+      - name: Set up Docker Buildx
       id: buildx
       uses: crazy-max/ghaction-docker-buildx@v3
       with:
@@ -33,16 +37,13 @@ jobs:
         qemu-version: latest
     - name: Run Buildx
       run: |
+        if [ "${VERSION}" = "master" ]; then echo "::set-env name=VERSION::latest";fi
         docker buildx build \
           --platform linux/386,linux/amd64 \
           --build-arg VERSION=$VERSION \
-          --output "type=image,push=false" \
-          --tag prometheus:latest \
+          --push \
+          --tag urfin78/prometheus:${VERSION} \
           --file ./Dockerfile.amd64 .
-        docker image ls
 
-    - name: check if image is gone
-      run: |
-        docker image ls
-      shell: bash
-  
+    - name: Logout from Dockerhub Registry
+      run: docker logout
