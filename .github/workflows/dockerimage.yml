@@ -2,7 +2,7 @@ name: Docker image build and push
 on: 
   push:
     branches:
-    - testing
+    - master
 
 jobs:
   build:
@@ -49,3 +49,58 @@ jobs:
 
     - name: Logout from Dockerhub Registry
       run: docker logout
+
+name: Docker image test
+on: 
+  pull-request:
+    branches:
+    - master
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    env:
+      VERSION: master
+      TAGVERSION: latest
+      AVAILABLE: false
+    strategy:
+      matrix:
+        VERSION: [master, last_upstream]
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v2
+    - name: Get latest prometheus release
+      run: |
+        export PROMETHEUS_LATEST=$(curl -s "https://api.github.com/repos/prometheus/prometheus/releases" | grep -Po '"tag_name": "\K.*?(?=")'|head -1)
+        echo "::set-env name=VERSION::$PROMETHEUS_LATEST"
+        echo "::set-env name=TAGVERSION::$PROMETHEUS_LATEST"
+        echo "::set-env name=AVAILABLE::true"
+      shell: bash
+      if: matrix.VERSION == 'last_upstream'
+     
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: crazy-max/ghaction-docker-buildx@v3
+      with:
+        buildx-version: latest
+        qemu-version: latest
+    
+    - name: Run Buildx
+      run: |
+        docker buildx build \
+          --rm \
+          --platform linux/amd64 \
+          --build-arg VERSION=$VERSION \
+          --load \
+          --tag prometheus:${TAGVERSION}-amd64 \
+          --file ./Dockerfile .
+        docker buildx build \
+          --rm \
+          --platform linux/386 \
+          --build-arg VERSION=$VERSION \
+          --load \
+          --tag prometheus:{TAGVERSION}-386 \
+          --file ./Dockerfile .
+        docker inspect prometheus:{TAGVERSION}-amd64
+        docker inspect prometheus:{TAGVERSION}-386
