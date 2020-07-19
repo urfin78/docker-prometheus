@@ -45,7 +45,7 @@ jobs:
           --build-arg VERSION=$VERSION \
           --push \
           --tag urfin78/prometheus:${TAGVERSION} \
-          --file ./Dockerfile.amd64 .
+          --file ./Dockerfile .
 
     - name: Logout from Dockerhub Registry
       run: docker logout
