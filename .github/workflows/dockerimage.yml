@@ -17,8 +17,7 @@ jobs:
         VERSION: [latest, last_upstream]
       fail-fast: false
     steps:
-    - uses: actions/checkout@v1
-
+    - uses: actions/checkout@v2
     - name: Get latest prometheus release
       run: |
         export PROMETHEUS_LATEST=$(curl -s "https://api.github.com/repos/prometheus/prometheus/releases" | grep -Po '"tag_name": "\K.*?(?=")'|head -1)
@@ -26,25 +25,17 @@ jobs:
         echo "::set-env name=AVAILABLE::true"
       shell: bash
       if: matrix.VERSION == 'last_upstream'
-   
-    - name: Build the latest Docker image
-      run: docker build --build-arg VERSION=master --build-arg ARCH=${{ matrix.ARCH }} -t prometheus:latest -f "Dockerfile.${{ matrix.ARCH }}" .
-      if: success() && matrix.VERSION == 'latest'
 
-    - name: Build the Docker image
-      run: docker build --build-arg VERSION=$VERSION --build-arg ARCH=${{ matrix.ARCH }} -t prometheus:$VERSION -f "Dockerfile.${{ matrix.ARCH }}" .
-      if: success() && matrix.VERSION == 'last_upstream'
-    
-    - name: Login to GitHub Package Registry
-      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u "${{ github.actor }}" --password-stdin
-
-    - name: Tag the latest Docker image
-      run: docker tag prometheus:$VERSION docker.pkg.github.com/urfin78/docker-prometheus/prometheus:$VERSION-${{ matrix.ARCH }}
-      if: success()
-
-    - name: Push the latest image to GPR
-      run: docker push docker.pkg.github.com/urfin78/docker-prometheus/prometheus:$VERSION-${{ matrix.ARCH }}
-      if: success()
-
-    - name: Logout to GitHub Registry
-      run: docker logout docker.pkg.github.com
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: crazy-max/ghaction-docker-buildx@v3
+      with:
+        buildx-version: latest
+        qemu-version: latest
+    - name: Run Buildx
+      run: |
+        docker buildx build \
+          --platform linux/386,linux/amd64,linux/arm/v6 \
+          --build-arg VERSION=$VERSION \
+          --output "type=image,push=false" \
+          --file ./Dockerfile.amd64 .
