@@ -58,7 +58,7 @@ on:
 
 jobs:
   build:
-    name: Build
+    name: Test
     runs-on: ubuntu-latest
     env:
       VERSION: master
