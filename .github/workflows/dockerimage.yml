@@ -26,27 +26,6 @@ jobs:
         echo "::set-env name=AVAILABLE::true"
       shell: bash
       if: matrix.VERSION == 'last_upstream'
-
-    - name: Get last package
-      uses: octokit/graphql-action@v2.x
-      id: get_latest_package
-      with:
-        query: |
-          query release($owner:String!,$repo:String!) {
-            repository(owner:$owner,name:$repo) {
-              packages(first:1) {
-                nodes {
-                  name
-                  version
-                }
-              }
-            }
-          }
-        owner: ${{ github.event.repository.owner.name }}
-        repo: ${{ github.event.repository.name }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - run: "echo 'latest release: ${{ steps.get_latest_package.outputs.data }}'"
    
     - name: Build the latest Docker image
       run: docker build --build-arg VERSION=master --build-arg ARCH=${{ matrix.ARCH }} -t prometheus:latest -f "Dockerfile.${{ matrix.ARCH }}" .
