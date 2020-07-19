@@ -13,8 +13,7 @@ jobs:
       AVAILABLE: false
     strategy:
       matrix:
-        ARCH: [amd64, i386, arm32v6]
-        VERSION: [latest, last_upstream]
+        VERSION: [master, last_upstream]
       fail-fast: false
     steps:
     - uses: actions/checkout@v2
@@ -35,7 +34,7 @@ jobs:
     - name: Run Buildx
       run: |
         docker buildx build \
-          --platform linux/386,linux/amd64,linux/arm/v6 \
+          --platform linux/386,linux/amd64 \
           --build-arg VERSION=$VERSION \
           --output "type=image,push=false" \
           --file ./Dockerfile.amd64 .
