@@ -29,12 +29,13 @@ jobs:
       run: echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u "${{ secrets.DOCKER_USER }}" --password-stdin
       if: success()
     
-      - name: Set up Docker Buildx
+    - name: Set up Docker Buildx
       id: buildx
       uses: crazy-max/ghaction-docker-buildx@v3
       with:
         buildx-version: latest
         qemu-version: latest
+    
     - name: Run Buildx
       run: |
         if [ "${VERSION}" = "master" ]; then echo "::set-env name=VERSION::latest";fi
