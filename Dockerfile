@@ -1,8 +1,8 @@
 FROM golang:1.13-alpine as gobuild
-ARG SW_VERSION
+ARG VERSION
 WORKDIR ${GOPATH}/src
 RUN apk add --no-cache yarn git curl bash build-base
-RUN git clone http://github.com/prometheus/prometheus.git --single-branch --branch ${SW_VERSION} --depth=1
+RUN git clone http://github.com/prometheus/prometheus.git --single-branch --branch ${VERSION} --depth=1
 WORKDIR ${GOPATH}/src/prometheus
 RUN make build
 FROM alpine
