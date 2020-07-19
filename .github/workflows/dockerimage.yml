@@ -52,7 +52,7 @@ jobs:
 
 name: Docker image test
 on: 
-  pull-request:
+  pull_request:
     branches:
     - master
 
