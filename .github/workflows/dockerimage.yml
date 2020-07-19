@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       VERSION: master
+      TAGVERSION: latest
       AVAILABLE: false
     strategy:
       matrix:
@@ -21,6 +22,7 @@ jobs:
       run: |
         export PROMETHEUS_LATEST=$(curl -s "https://api.github.com/repos/prometheus/prometheus/releases" | grep -Po '"tag_name": "\K.*?(?=")'|head -1)
         echo "::set-env name=VERSION::$PROMETHEUS_LATEST"
+        echo "::set-env name=TAGVERSION::$PROMETHEUS_LATEST"
         echo "::set-env name=AVAILABLE::true"
       shell: bash
       if: matrix.VERSION == 'last_upstream'
@@ -38,12 +40,11 @@ jobs:
     
     - name: Run Buildx
       run: |
-        if [ "${VERSION}" = "master" ]; then echo "::set-env name=VERSION::latest";fi
         docker buildx build \
           --platform linux/386,linux/amd64 \
           --build-arg VERSION=$VERSION \
           --push \
-          --tag urfin78/prometheus:${VERSION} \
+          --tag urfin78/prometheus:${TAGVERSION} \
           --file ./Dockerfile.amd64 .
 
     - name: Logout from Dockerhub Registry
