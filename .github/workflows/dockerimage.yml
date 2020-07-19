@@ -9,7 +9,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     env:
-      VERSION: latest
+      VERSION: master
       AVAILABLE: false
     strategy:
       matrix:
@@ -37,4 +37,12 @@ jobs:
           --platform linux/386,linux/amd64 \
           --build-arg VERSION=$VERSION \
           --output "type=image,push=false" \
+          --tag prometheus:latest
           --file ./Dockerfile.amd64 .
+        docker image ls
+
+    - name: check if image is gone
+      run: |
+        docker image ls
+      shell: bash
+  
