@@ -48,7 +48,7 @@ jobs:
         --platform linux/386 \
         --build-arg VERSION=$VERSION \
         --load \
-        --tag prometheus:{TAGVERSION}-386 \
+        --tag prometheus:${TAGVERSION}-386 \
         --file ./Dockerfile .
-        docker inspect prometheus:{TAGVERSION}-amd64
-        docker inspect prometheus:{TAGVERSION}-386
+        docker image inspect prometheus:${TAGVERSION}-amd64
+        docker image inspect prometheus:${TAGVERSION}-386
