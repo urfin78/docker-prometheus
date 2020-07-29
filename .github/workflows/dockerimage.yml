@@ -50,21 +50,29 @@ jobs:
 
     - name: Logout from Dockerhub Registry
       run: docker logout
-
     
     - name: Login to GitHub Package Registry
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u "${{ github.actor }}" --password-stdin
 
-    - name: Tag the Docker images
+    - name: Tag the last upstream image
       run: |
         docker pull urfin78/prometheus:${TAGVERSION}
-        docker pull urfin78/prometheus:latest
         docker tag urfin78/prometheus:${TAGVERSION} docker.pkg.github.com/urfin78/docker-prometheus/prometheus:${TAGVERSION}
+      if: matrix.VERSION == 'last_upstream'
+
+    - name: Push the last upstream image to GPR
+      run: docker push docker.pkg.github.com/urfin78/docker-prometheus/prometheus:${TAGVERSION}
+      if: matrix.VERSION == 'last_upstream'
+    
+    - name: Tag the latest image
+      run: |
+        docker pull urfin78/prometheus:latest
         docker tag urfin78/prometheus:latest docker.pkg.github.com/urfin78/docker-prometheus/prometheus:latest
-      if: success()
+      if: matrix.VERSION == 'master'
 
     - name: Push the latest image to GPR
-      run: |
-        docker push docker.pkg.github.com/urfin78/docker-prometheus/prometheus:${TAGVERSION}
-        docker push docker.pkg.github.com/urfin78/docker-prometheus/prometheus:latest
-      if: success()
+      run: docker push docker.pkg.github.com/urfin78/docker-prometheus/prometheus:latest
+      if: matrix.VERSION == 'master'
+
+    - name: Logout from Dockerhub Registry
+      run: docker logout
