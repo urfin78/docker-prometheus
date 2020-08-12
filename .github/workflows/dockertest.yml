@@ -52,7 +52,5 @@ jobs:
         --file ./Dockerfile .
     - name: Test image
       run: |
-        docker image ls
-        docker inspect prometheus:${TAGVERSION}-amd64
         docker run -p 127.0.0.1:9999:9090 -d --name test prometheus:${TAGVERSION}-amd64
-        if [[ ! "$(curl -s http://127.0.0.1:9999/metrics|grep -E '^.*prometheus_build_info\{.*'|awk '{print $2}')" == "1" ]];then exit 1;fi
+        if [[ ! "$(curl -s http://127.0.0.1:9999/metrics|grep -E '^.*prometheus_build_info\{.*'|awk '{print $2}')" == "1" ]];then echo "ERROR";exit 1;else echo "OK";fi
