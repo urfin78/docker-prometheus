@@ -22,9 +22,9 @@ jobs:
     - name: Get latest prometheus release
       run: |
         export PROMETHEUS_LATEST=$(curl -s "https://api.github.com/repos/prometheus/prometheus/releases" | grep -Po '"tag_name": "\K.*?(?=")'|head -1)
-        echo "::set-env name=VERSION::$PROMETHEUS_LATEST"
-        echo "::set-env name=TAGVERSION::$PROMETHEUS_LATEST"
-        echo "::set-env name=AVAILABLE::true"
+        echo "VERSION=$PROMETHEUS_LATEST" >> ${GITHUB_ENV}
+        echo "TAGVERSION=$PROMETHEUS_LATEST" >> ${GITHUB_ENV}
+        echo "AVAILABLE=true" >> ${GITHUB_ENV}
       shell: bash
       if: matrix.VERSION == 'last_upstream'
     
