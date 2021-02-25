@@ -12,12 +12,12 @@ jobs:
     name: buildtest
     runs-on: ubuntu-latest
     env:
-      VERSION: master
+      VERSION: main
       TAGVERSION: latest
       AVAILABLE: false
     strategy:
       matrix:
-        VERSION: [master, last_upstream]
+        VERSION: [main, last_upstream]
       fail-fast: false
     steps:
     - uses: actions/checkout@v2
