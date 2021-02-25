@@ -10,12 +10,12 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     env:
-      VERSION: master
+      VERSION: main
       TAGVERSION: latest
       AVAILABLE: false
     strategy:
       matrix:
-        VERSION: [master, last_upstream]
+        VERSION: [main, last_upstream]
       fail-fast: false
     steps:
     - uses: actions/checkout@v2
@@ -68,11 +68,11 @@ jobs:
       run: |
         docker pull urfin78/prometheus:latest
         docker tag urfin78/prometheus:latest docker.pkg.github.com/urfin78/docker-prometheus/prometheus:latest
-      if: matrix.VERSION == 'master'
+      if: matrix.VERSION == 'main'
 
     - name: Push the latest image to GPR
       run: docker push docker.pkg.github.com/urfin78/docker-prometheus/prometheus:latest
-      if: matrix.VERSION == 'master'
+      if: matrix.VERSION == 'main'
 
     - name: Logout from Dockerhub Registry
       run: docker logout
