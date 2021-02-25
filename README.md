@@ -12,7 +12,7 @@ You can manually build it by defining the prometheus version as build argument `
 For the latest version use `master` as version.  
 
 ```bash
-docker build --build-arg SW_VERSION=master -t prometheus -f Dockerfile.
+docker build --build-arg SW_VERSION=main -t prometheus -f Dockerfile.
 ```
 
 ## License
