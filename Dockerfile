@@ -1,11 +1,11 @@
 FROM golang:1.16.3-alpine as gobuild
 ARG VERSION
 WORKDIR ${GOPATH}/src
-RUN apk add --no-cache yarn git curl bash build-base
+RUN apk add --no-cache yarn git curl bash build-base python3 && ln -sf python3 /usr/bin/python
 RUN git clone http://github.com/prometheus/prometheus.git --single-branch --branch ${VERSION} --depth=1
 WORKDIR ${GOPATH}/src/prometheus
 RUN make build
-FROM alpine
+FROM alpine:3.13.5
 ENV USER prometheus
 ENV UID 9090
 ENV GID 9090
