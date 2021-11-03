@@ -18,7 +18,7 @@ jobs:
         VERSION: [main, last_upstream]
       fail-fast: false
     steps:
-    - uses: actions/checkout@v2.3.5
+    - uses: actions/checkout@v2.4.0
     - name: Get latest prometheus release
       run: |
         export PROMETHEUS_LATEST=$(curl -s "https://api.github.com/repos/prometheus/prometheus/releases" | grep -Po '"tag_name": "\K.*?(?=")'|head -1)
