@@ -5,7 +5,7 @@ RUN apk add --no-cache yarn git curl bash build-base python2 npm
 RUN git clone http://github.com/prometheus/prometheus.git --single-branch --branch ${VERSION} --depth=1
 WORKDIR ${GOPATH}/src/prometheus
 RUN make build
-FROM alpine:3.15.3
+FROM alpine:3.15.4
 ENV USER prometheus
 ENV UID 9090
 ENV GID 9090
