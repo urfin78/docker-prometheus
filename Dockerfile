@@ -1,7 +1,7 @@
 FROM golang:1.18.1-alpine as gobuild
 ARG VERSION
 WORKDIR ${GOPATH}/src
-RUN apk add --no-cache yarn git curl bash build-base python2 npm
+RUN apk add --no-cache yarn tar git curl bash build-base python2 npm
 RUN git clone http://github.com/prometheus/prometheus.git --single-branch --branch ${VERSION} --depth=1
 WORKDIR ${GOPATH}/src/prometheus
 RUN make build
