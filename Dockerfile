@@ -1,4 +1,4 @@
-FROM golang:1.18.3-alpine as gobuild
+FROM golang:1.18.4-alpine as gobuild
 ARG VERSION
 WORKDIR ${GOPATH}/src
 RUN apk add --no-cache yarn tar git curl bash build-base python3 npm
