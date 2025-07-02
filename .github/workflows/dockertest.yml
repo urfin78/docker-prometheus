@@ -31,7 +31,7 @@ jobs:
       if: matrix.VERSION == 'last_upstream'
       
     - name: Set up QEMU
-      uses: docker/setup-qemu-action@v3.1.0
+      uses: docker/setup-qemu-action@v3.6.0
     
     - name: Set up Docker Buildx
       id: buildx
